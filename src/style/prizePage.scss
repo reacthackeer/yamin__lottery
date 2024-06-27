@@ -1,0 +1,62 @@
+.page__default__style{
+    background-color: #f0f3f5;
+    padding: 40px;
+
+    .top__heading{
+        background-color: white;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 0 3px grey;
+        border-radius: 2px;
+        margin-bottom: 40px;
+    }
+
+    .prize__table{ 
+        background-color: white;
+        padding: 40px;
+        box-shadow: 0 0 3px grey;
+        border-radius: 2px;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    .page__default__style{ 
+        padding: 20px;
+
+        .top__heading{ 
+            padding: 20px; 
+            margin-bottom: 20px;
+        }
+        .prize__table{  
+            padding: 20px; 
+        }
+    }
+}
+
+
+@media only screen and (max-width: 700px) {
+    .page__default__style{ 
+        padding: 10px;
+        .top__heading{ 
+            padding: 10px; 
+            margin-bottom: 10px;
+        }
+        .prize__table{  
+            padding: 10px; 
+        }
+    }
+}
+
+
+@media only screen and (max-width: 501px) {
+    .page__default__style{ 
+        padding: 2px;
+        .top__heading{ 
+            padding: 2px; 
+            margin-bottom: 2px;
+        }
+        .prize__table{  
+            padding: 2px; 
+        }
+    }
+}
