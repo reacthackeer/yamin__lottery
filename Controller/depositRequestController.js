@@ -2,7 +2,6 @@
 const asyncHandler = require('express-async-handler'); 
 const { currencyUtils } = require('../utils/utils/CurrencyUtils'); 
 const DepositRequest = require('../model/DepositRequest');
-const User = require('../model/User');
 const Currency = require('../model/Currency');
 const RootAsset = require('../model/RootAsset');
 const RootTransaction = require('../model/RootTransaction');

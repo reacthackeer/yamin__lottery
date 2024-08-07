@@ -8,14 +8,13 @@ const sequelize = require('./config/database');
 const authRouter = require('./Router/User/authRouter'); 
 const { currencyRouter } = require('./Router/currency');
 const { walletRouter } = require('./Router/Wallet');
-const { couponRouter } = require('./Router/Coupon'); 
-const RootTransaction = require('./model/RootTransaction');
-const Transaction = require('./model/Transaction');
+const { couponRouter } = require('./Router/Coupon');  
 const { depositRequestRouter } = require('./Router/depositRequest');
 const { dashboardRouter } = require('./Router/DashboardRouter');
 const lotteryRouter = require('./Router/Lottery/LotteryRouter');
 const { withdrawalRequestRouter } = require('./Router/withdrawalRequest');
 const { investRequestRouter } = require('./Router/investRequest');
+const { prizeRouter } = require('./Router/PrizeRouter');
 // application configuration start
 app.use(bodyParser.json());
 app.use(fileUpload({limits: '100mb'}));
@@ -58,6 +57,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/currency', currencyRouter);
 app.use('/api/v1/wallet', walletRouter);
 app.use('/api/v1/coupon', couponRouter);
+app.use('/api/v1/prize', prizeRouter);
 app.use('/api/v1/deposit-request', depositRequestRouter);
 app.use('/api/v1/withdrawal-request', withdrawalRequestRouter);
 app.use('/api/v1/invest-request', investRequestRouter);
@@ -70,7 +70,7 @@ app.listen(port, (err)=> {
         console.log(`Server is running on port http://localhost:${port}`)
     }
 });
-
+// 980209
 // Error handling middleware
 app.use((err, req, res, next) => {
 

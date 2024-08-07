@@ -1,5 +1,4 @@
 const { handleAddSingleInvestSystemRequest, handleConfirmInvestRequest, handleDeleteSingleInvestRequest, handleBlockRequestedUserInvestSystem, handleGetAllInvestSystemRequest, handleFinishInvestRequest } = require('../Controller/InvestSystemController');
-const { handleAddSingleWithdrawalRequest, handleConfirmWithdrawalRequest, handleDeleteSingleWithdrawalRequest, handleBlockRequestedUserWithdrawal, handleGetAllWithdrawalRequest } = require('../Controller/withdrawalController');
 const { authenticateToken, authenticateTokenAdmin } = require('../utils/jsonwebtoken');
 
 const investRequestRouter = require('express').Router();

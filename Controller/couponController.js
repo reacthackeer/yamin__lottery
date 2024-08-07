@@ -3,8 +3,7 @@ const { currencyUtils } = require('../utils/utils/CurrencyUtils');
 const Coupon = require('../model/Coupon');
 const RootAsset = require('../model/RootAsset');
 const RootTransaction = require('../model/RootTransaction');
-const Transaction = require('../model/Transaction');
-const User = require('../model/User');
+const Transaction = require('../model/Transaction'); 
 const UserInfoModel = require('../model/User/UserInfoModel');
 const UserAccountStatementModel = require('../model/User/UserAccountStatement');
 

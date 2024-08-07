@@ -5,8 +5,7 @@ const UserInfoModel = require('../../model/User/UserInfoModel');
 const UserAccountStatementModel = require('../../model/User/UserAccountStatement');
 const RootAsset = require('../../model/RootAsset');
 const LotteryModel = require('../../model/Earning/LotteryModel');
-const { uid } = require('uid');
-const e = require('express');
+const { uid } = require('uid'); 
 
 const handleAddSingleSystemLottery = asyncHandler(async(req, res, next)=> {
     let postInfo = req.body;
@@ -34,7 +33,7 @@ const handleAddSingleSystemLottery = asyncHandler(async(req, res, next)=> {
 
 const handleGetAllSystemLottery = asyncHandler(async(req, res, next)=> {
     try {
-        let allLotteryResult = await SystemLotteryModel.findAll({});
+        let allLotteryResult = await SystemLotteryModel.findAll({order: [['id', 'DESC']]});
         res.json(allLotteryResult);
     } catch (error) {
         next(new Error(error.message))
@@ -102,46 +101,99 @@ const handleBuyMultipleLottery = asyncHandler(async(req, res, next) => {
                                 info.systemLotteryId = getSystemLottery.lotteryId; 
                                 newLotteryArray.push(info);
                             }) 
-                        try {
-                            let lotteryCreateResult = await LotteryModel.bulkCreate(newLotteryArray);
-                            if(lotteryCreateResult && lotteryCreateResult.length){
-                                if((Number(getSystemLottery.price) * quantity) <= Number(getSellerInfo.realBalance)){
-                                    let totalMinus = Number(getSystemLottery.price) * quantity;
-                                    let totalCommission = (totalMinus / 100) * 33.34;
-                                    let totalSystemMoney = (totalMinus / 100) * 66.66;
-                                    let totalAffiliateCommission = totalCommission / 2;
-                                    let totalAppCommission = totalCommission / 2; 
-                                    try {
-                                        let incrementSellerInfo = await UserInfoModel.increment({
-                                            realBalance: - totalMinus
-                                        },{where: {userId}}); 
-                                        if(incrementSellerInfo && incrementSellerInfo[0] && incrementSellerInfo[0][1]){
-                                            try {
-                                                let incrementSellerDash = await UserAccountStatementModel.increment({
-                                                    'totalOut': totalMinus,
-                                                    'totalLottery': quantity,
-                                                    'totalBalance': - totalMinus 
-                                                },{where: {userId}}); 
-                                                if(incrementSellerDash && incrementSellerDash[0] && incrementSellerDash[0][1]){
-                                                    try {
-                                                        let incrementRootAsset = await RootAsset.increment({
-                                                            'realTotalCommission': totalCommission,
-                                                            'realTotalAppCommission': totalAppCommission,
-                                                            'realTotalPartnerCommission': totalAffiliateCommission,
-                                                            'totalLotterySale': quantity
-                                                        },{where: {id: 1}});
-                                                        if(incrementRootAsset && incrementRootAsset[0] && incrementRootAsset[0][1]){
-                                                            try {
-                                                                let systemLotteryUpdateResult = await SystemLotteryModel.increment({
-                                                                    'totalSell': quantity,
-                                                                    'totalCollection': totalMinus,
-                                                                    'appCommission': totalAppCommission,
-                                                                    'userCommission': totalAffiliateCommission,
-                                                                    'amount': totalSystemMoney
-                                                                },{where: {lotteryId: getSystemLottery.lotteryId}});
-                                                                if(systemLotteryUpdateResult && systemLotteryUpdateResult[0] && systemLotteryUpdateResult[0][1]){
-                                                                    if(Number(getSellerInfo.role) < 9){
-                                                                        let transactionModelUser = [
+                            if((Number(getSystemLottery.price) * quantity) <= Number(getSellerInfo.realBalance)){
+                                let totalMinus = Number(getSystemLottery.price) * quantity;
+                                let totalCommission = (totalMinus / 100) * 33.34;
+                                let totalSystemMoney = (totalMinus / 100) * 66.66;
+                                let totalAffiliateCommission = totalCommission / 2;
+                                let totalAppCommission = totalCommission / 2; 
+                                try {
+                                    let lotteryCreateResult = await LotteryModel.bulkCreate(newLotteryArray);
+                                    if(lotteryCreateResult && lotteryCreateResult.length){
+                                        try {
+                                            let incrementSellerInfo = await UserInfoModel.increment({
+                                                realBalance: - totalMinus
+                                            },{where: {userId}}); 
+                                            if(incrementSellerInfo && incrementSellerInfo[0] && incrementSellerInfo[0][1]){
+                                                try {
+                                                    let incrementSellerDash = await UserAccountStatementModel.increment({
+                                                        'totalOut': totalMinus,
+                                                        'totalLottery': quantity,
+                                                        'totalBalance': - totalMinus 
+                                                    },{where: {userId}}); 
+                                                    if(incrementSellerDash && incrementSellerDash[0] && incrementSellerDash[0][1]){
+                                                        try {
+                                                            let incrementRootAsset = await RootAsset.increment({
+                                                                'realTotalCommission': totalCommission,
+                                                                'realTotalAppCommission': totalAppCommission,
+                                                                'realTotalPartnerCommission': totalAffiliateCommission,
+                                                                'totalLotterySale': quantity
+                                                            },{where: {id: 1}});
+                                                            if(incrementRootAsset && incrementRootAsset[0] && incrementRootAsset[0][1]){
+                                                                try {
+                                                                    let systemLotteryUpdateResult = await SystemLotteryModel.increment({
+                                                                        'totalSell': quantity,
+                                                                        'totalCollection': totalMinus,
+                                                                        'appCommission': totalAppCommission,
+                                                                        'userCommission': totalAffiliateCommission,
+                                                                        'amount': totalSystemMoney
+                                                                    },{where: {lotteryId: getSystemLottery.lotteryId}});
+                                                                    if(systemLotteryUpdateResult && systemLotteryUpdateResult[0] && systemLotteryUpdateResult[0][1]){
+                                                                        if(Number(getSellerInfo.role) < 9){
+                                                                            let transactionModelUser = [
+                                                                                {
+                                                                                    isIn: 'IN',
+                                                                                    txrId: uid(8),
+                                                                                    typeName: 'LOTTERY SALE COMMISSION',
+                                                                                    userId: getSellerInfo.referralCode,
+                                                                                    sourceId: getSellerInfo.userId,
+                                                                                    balanceType: 'REAL',
+                                                                                    used: 'false',
+                                                                                    amount: totalCommission / 3,
+                                                                                },
+                                                                                {
+                                                                                    isIn: 'IN',
+                                                                                    txrId: uid(8),
+                                                                                    typeName: 'LOTTERY SALE COMMISSION',
+                                                                                    userId: getSellerInfo.userId,
+                                                                                    sourceId: getSellerInfo.referralCode,
+                                                                                    balanceType: 'REAL',
+                                                                                    used: 'false',
+                                                                                    amount: totalCommission / 3,
+                                                                                },
+                                                                                {
+                                                                                    isIn: 'IN',
+                                                                                    txrId: uid(8),
+                                                                                    typeName: 'LOTTERY SALE COMMISSION',
+                                                                                    userId: 'SSSSSSSSSSSSSSS',
+                                                                                    sourceId: getSellerInfo.userId,
+                                                                                    balanceType: 'REAL',
+                                                                                    used: 'false',
+                                                                                    amount: totalCommission / 3,
+                                                                                },
+                                                                                {
+                                                                                    isIn: 'OUT',
+                                                                                    txrId: uid(8),
+                                                                                    typeName: 'LOTTERY BUY',
+                                                                                    userId: getSellerInfo.userId,
+                                                                                    sourceId: getSellerInfo.userId,
+                                                                                    balanceType: 'REAL',
+                                                                                    used: 'false',
+                                                                                    amount: totalMinus,
+                                                                                },
+                                                                            ] 
+                                                                            try {
+                                                                                let transactionCreateResult = await Transaction.bulkCreate(transactionModelUser);
+                                                                                if(transactionCreateResult && transactionCreateResult.length){ 
+                                                                                    res.json({id: 2})
+                                                                                }else{
+                                                                                    next(new Error('Internal server error!'))
+                                                                                }
+                                                                            } catch (error) {
+                                                                                next(new Error(error.message))
+                                                                            }
+                                                                        }else{
+                                                                            let transactionModelUser = [
                                                                             {
                                                                                 isIn: 'IN',
                                                                                 txrId: uid(8),
@@ -150,27 +202,7 @@ const handleBuyMultipleLottery = asyncHandler(async(req, res, next) => {
                                                                                 sourceId: getSellerInfo.userId,
                                                                                 balanceType: 'REAL',
                                                                                 used: 'false',
-                                                                                amount: totalCommission / 3,
-                                                                            },
-                                                                            {
-                                                                                isIn: 'IN',
-                                                                                txrId: uid(8),
-                                                                                typeName: 'LOTTERY SALE COMMISSION',
-                                                                                userId: getSellerInfo.userId,
-                                                                                sourceId: getSellerInfo.referralCode,
-                                                                                balanceType: 'REAL',
-                                                                                used: 'false',
-                                                                                amount: totalCommission / 3,
-                                                                            },
-                                                                            {
-                                                                                isIn: 'IN',
-                                                                                txrId: uid(8),
-                                                                                typeName: 'LOTTERY SALE COMMISSION',
-                                                                                userId: 'SSSSSSSSSSSSSSS',
-                                                                                sourceId: getSellerInfo.userId,
-                                                                                balanceType: 'REAL',
-                                                                                used: 'false',
-                                                                                amount: totalCommission / 3,
+                                                                                amount: totalAffiliateCommission,
                                                                             },
                                                                             {
                                                                                 isIn: 'OUT',
@@ -182,7 +214,18 @@ const handleBuyMultipleLottery = asyncHandler(async(req, res, next) => {
                                                                                 used: 'false',
                                                                                 amount: totalMinus,
                                                                             },
-                                                                        ] 
+                                                                            {
+                                                                                isIn: 'IN',
+                                                                                txrId: uid(8),
+                                                                                typeName: 'LOTTERY SALE COMMISSION',
+                                                                                userId: 'SSSSSSSSSSSSSSS',
+                                                                                sourceId: getSellerInfo.userId,
+                                                                                balanceType: 'REAL',
+                                                                                used: 'false',
+                                                                                amount: totalAppCommission,
+                                                                            },
+                                                                        ]
+                                    
                                                                         try {
                                                                             let transactionCreateResult = await Transaction.bulkCreate(transactionModelUser);
                                                                             if(transactionCreateResult && transactionCreateResult.length){ 
@@ -193,84 +236,40 @@ const handleBuyMultipleLottery = asyncHandler(async(req, res, next) => {
                                                                         } catch (error) {
                                                                             next(new Error(error.message))
                                                                         }
-                                                                    }else{
-                                                                        let transactionModelUser = [
-                                                                        {
-                                                                            isIn: 'IN',
-                                                                            txrId: uid(8),
-                                                                            typeName: 'LOTTERY SALE COMMISSION',
-                                                                            userId: getSellerInfo.referralCode,
-                                                                            sourceId: getSellerInfo.userId,
-                                                                            balanceType: 'REAL',
-                                                                            used: 'false',
-                                                                            amount: totalAffiliateCommission,
-                                                                        },
-                                                                        {
-                                                                            isIn: 'OUT',
-                                                                            txrId: uid(8),
-                                                                            typeName: 'LOTTERY BUY',
-                                                                            userId: getSellerInfo.userId,
-                                                                            sourceId: getSellerInfo.userId,
-                                                                            balanceType: 'REAL',
-                                                                            used: 'false',
-                                                                            amount: totalMinus,
-                                                                        },
-                                                                        {
-                                                                            isIn: 'IN',
-                                                                            txrId: uid(8),
-                                                                            typeName: 'LOTTERY SALE COMMISSION',
-                                                                            userId: 'SSSSSSSSSSSSSSS',
-                                                                            sourceId: getSellerInfo.userId,
-                                                                            balanceType: 'REAL',
-                                                                            used: 'false',
-                                                                            amount: totalAppCommission,
-                                                                        },
-                                                                    ]
-
-                                                                    try {
-                                                                        let transactionCreateResult = await Transaction.bulkCreate(transactionModelUser);
-                                                                        if(transactionCreateResult && transactionCreateResult.length){ 
-                                                                            res.json({id: 2})
-                                                                        }else{
-                                                                            next(new Error('Internal server error!'))
                                                                         }
-                                                                    } catch (error) {
-                                                                        next(new Error(error.message))
+                                                                    }else{
+                                                                        next(new Error('Internal server error while increment system lottery info!'));
                                                                     }
-                                                                    }
-                                                                }else{
-                                                                    next(new Error('Internal server error while increment system lottery info!'));
+                                                                } catch (error) {
+                                                                    next(new Error(error.message));
                                                                 }
-                                                            } catch (error) {
-                                                                next(new Error(error.message));
+                                                            }else{
+                                                                next(new Error('Internal server error while increment root info!'));
                                                             }
-                                                        }else{
-                                                            next(new Error('Internal server error while increment root info!'));
+                                                        } catch (error) {
+                                                            next(new Error(error.message))
                                                         }
-                                                    } catch (error) {
-                                                        next(new Error(error.message))
+                                                    }else{  
+                                                        next(new Error('Internal server error while increment seller dashboard info!'));
                                                     }
-                                                }else{  
-                                                    next(new Error('Internal server error while increment seller dashboard info!'));
+                                                } catch (error) {
+                                                    next(new Error(error.message))
                                                 }
-                                            } catch (error) {
-                                                next(new Error(error.message))
+                                            }else{
+                                                next(new Error('Internal server error while increment seller info!'));
                                             }
-                                        }else{
-                                            next(new Error('Internal server error while increment seller info!'));
+                                        } catch (error) {
+                                            next(new Error(error.message))
                                         }
-                                    } catch (error) {
-                                        next(new Error(error.message))
+                                    }else{
+                                        next(new Error('Internal server error while bulk create lottery info!'));
                                     }
-                                }else{
-                                    next(new Error('Balance Low!'))
+                                } catch (error) {
+                                    next(new Error(error.message))
                                 }
                             }else{
-                                next(new Error('Internal server error while bulk create lottery info!'));
+                                next(new Error('Balance Low!'))
                             }
-                        } catch (error) {
-                            next(new Error(error.message))
-                        }
                         }else{
                             next(new Error('Seller Info not founded!'))
                         }
@@ -296,7 +295,7 @@ const handleGetSingleUserLottery = asyncHandler(async(req, res, next) => {
     let skip = (limit * page) - limit;
     if(userId){
         try {
-            let allLotteryResult = await LotteryModel.findAll({where: {userId: userId}, offset: skip, limit: limit}); 
+            let allLotteryResult = await LotteryModel.findAll({where: {userId: userId}, offset: skip, limit: limit, order: [['id', 'DESC']]}); 
             if(allLotteryResult && allLotteryResult.length){
                 try {
                     let allUserCountInfo = await LotteryModel.count({where: {userId}});
@@ -323,7 +322,7 @@ const handleGetSingleUserLotteryBuyHistory = asyncHandler(async(req, res, next) 
     let skip = (limit * page) - limit;
     if(userId){
         try {
-            let allLotteryResult = await Transaction.findAll({where: {userId: userId, typeName: 'LOTTERY BUY'}, offset: skip, limit: limit}); 
+            let allLotteryResult = await Transaction.findAll({where: {userId: userId, typeName: 'LOTTERY BUY'}, offset: skip, limit: limit, order: [['id', 'DESC']]}); 
             if(allLotteryResult && allLotteryResult.length){
                 try {
                     let allUserCountInfo = await Transaction.count({where: {userId, typeName: 'LOTTERY BUY'}});
@@ -349,7 +348,7 @@ const handleGetSingleUserTransactionHistory = asyncHandler(async(req, res, next)
     let skip = (limit * page) - limit;
     if(userId){
         try {
-            let allLotteryResult = await Transaction.findAll({where: {userId: userId}, offset: skip, limit: limit}); 
+            let allLotteryResult = await Transaction.findAll({where: {userId: userId}, offset: skip, limit: limit, order: [['id', 'DESC']]}); 
             if(allLotteryResult && allLotteryResult.length){
                 try {
                     let allUserCountInfo = await Transaction.count({where: {userId}});
@@ -375,7 +374,7 @@ const handleGetSingleUserEarningHistory = asyncHandler(async(req, res, next) => 
     let skip = (limit * page) - limit;
     if(userId){
         try {
-            let allLotteryResult = await Transaction.findAll({where: {userId: userId, isIn: 'IN', typeName: 'LOTTERY SALE COMMISSION'}, offset: skip, limit: limit}); 
+            let allLotteryResult = await Transaction.findAll({where: {userId: userId, isIn: 'IN', typeName: 'LOTTERY SALE COMMISSION'}, offset: skip, limit: limit, order: [['id', 'DESC']]}); 
             if(allLotteryResult && allLotteryResult.length){
                 try {
                     let allUserCountInfo = await Transaction.count({where: {userId, isIn: 'IN', typeName: 'LOTTERY SALE COMMISSION'}});
@@ -401,7 +400,7 @@ const handleGetSingleUserDepositHistory = asyncHandler(async(req, res, next) => 
     let skip = (limit * page) - limit;
     if(userId){
         try {
-            let allLotteryResult = await Transaction.findAll({where: {userId: userId, isIn: 'IN', typeName: 'WALLET DEPOSIT'}, offset: skip, limit: limit}); 
+            let allLotteryResult = await Transaction.findAll({where: {userId: userId, isIn: 'IN', typeName: 'WALLET DEPOSIT'}, offset: skip, limit: limit, order: [['id', 'DESC']]}); 
             if(allLotteryResult && allLotteryResult.length){
                 try {
                     let allUserCountInfo = await Transaction.count({where: {userId, isIn: 'IN', typeName: 'WALLET DEPOSIT'}});
@@ -427,7 +426,7 @@ const handleGetSingleUserTransferHistory = asyncHandler(async(req, res, next) =>
     let skip = (limit * page) - limit;
     if(userId){
         try {
-            let allLotteryResult = await Transaction.findAll({where: {userId: userId, typeName: 'BALANCE TRANSFER'}, offset: skip, limit: limit}); 
+            let allLotteryResult = await Transaction.findAll({where: {userId: userId, typeName: 'BALANCE TRANSFER'}, offset: skip, limit: limit, order: [['id', 'DESC']]}); 
             if(allLotteryResult && allLotteryResult.length){
                 try {
                     let allUserCountInfo = await Transaction.count({where: {userId, typeName: 'BALANCE TRANSFER'}});
@@ -444,8 +443,7 @@ const handleGetSingleUserTransferHistory = asyncHandler(async(req, res, next) =>
     }else{
         next(new Error('Invalid get request!'))
     }
-})
-
+}) 
 const handleGetSingleUserWithdrawalHistory = asyncHandler(async(req, res, next) => {
     let {userId} = req.params;
     let query = req.query;
@@ -454,7 +452,7 @@ const handleGetSingleUserWithdrawalHistory = asyncHandler(async(req, res, next) 
     let skip = (limit * page) - limit;
     if(userId){
         try {
-            let allLotteryResult = await Transaction.findAll({where: {userId: userId, isIn: 'OUT', typeName: 'WALLET WITHDRAWAL'}, offset: skip, limit: limit}); 
+            let allLotteryResult = await Transaction.findAll({where: {userId: userId, isIn: 'OUT', typeName: 'WALLET WITHDRAWAL'}, offset: skip, limit: limit, order: [['id', 'DESC']]}); 
             if(allLotteryResult && allLotteryResult.length){
                 try {
                     let allUserCountInfo = await Transaction.count({where: {userId, isIn: 'OUT', typeName: 'WALLET WITHDRAWAL'}});
@@ -480,11 +478,19 @@ const handleGetAllAllLotteryByPhone = asyncHandler(async(req, res, next) => {
             let systemLotteryResult = await SystemLotteryModel.findOne({where: {status: 'pending'}});
             if(systemLotteryResult && systemLotteryResult.dataValues && systemLotteryResult.dataValues.id){
                 try {
-                    let singleUserAllLottery = await LotteryModel.findAll({where: {phone: phoneNumber, status: 'accept', systemLotteryId: systemLotteryResult.dataValues.lotteryId}});
-                    res.json(singleUserAllLottery)
-                } catch (error) {
-                    next(new Error(error.message))
+                    let singleUserAllLottery = await LotteryModel.findAll({
+                        where: {
+                            phone: phoneNumber,
+                            status: 'accept',
+                            systemLotteryId: systemLotteryResult.dataValues.lotteryId
+                        }, 
+                        order: [['id', 'DESC']]
+                    }); 
+                    res.json(singleUserAllLottery);
+                } catch (error) { 
+                    next(new Error(error.message));
                 }
+                
             }else{
                 next(new Error('No lottery available!'))
             }
