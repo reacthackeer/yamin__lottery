@@ -1,87 +1,67 @@
 import {
-  Badge,
   Box,
-  Center,
-  ChakraProvider,
+  Container,
+  GridItem,
   Heading,
-  Table,
-  TableCaption,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  extendTheme,
+  SimpleGrid,
+  Text,
+  useColorModeValue
 } from '@chakra-ui/react';
 import React from 'react';
+import { useGetAllPrizeQuery } from '../Store/feature/prize/api';
 
-// Prize database
-const allPrizeDatabase = [
-  {
-    id: 1,
-    name: `FIFTY-FIVE THOUSAND US DOLLAR`,
-    price: 55000,
-  },
-  {
-    id: 2,
-    name: `TEN THOUSAND US DOLLAR`,
-    price: 10000,
-  },
-  {
-    id: 3,
-    name: `FIVE THOUSAND US DOLLAR`,
-    price: 5000,
-  },
-  {
-    id: 4,
-    name: `TWO THOUSAND US DOLLAR`,
-    price: 2000,
-  },
-  {
-    id: 5,
-    name: `ONE THOUSAND US DOLLAR`,
-    price: 1000,
-  },
-];
 
-const theme = extendTheme({
-  fonts: {
-    heading: 'Roboto',
-    body: 'Roboto',
-  },
-});
+const PrizeCard = ({ amount, name, created_at }) => {
+  const cardBg = useColorModeValue("white", "gray.700");
+  const cardText = useColorModeValue("gray.700", "white");
 
-const PrizeTable = () => {
   return (
-    <ChakraProvider theme={theme}>
-      <Center mt={10}>
-        <Box p={5} shadow="md" borderWidth="1px" borderRadius="md" w="80%">
-          <Heading mb={5}>Prize List</Heading>
-          <Table variant="striped" colorScheme="teal">
-            <TableCaption placement="top">Available Prizes</TableCaption>
-            <Thead>
-              <Tr>
-                <Th>Prize Name</Th>
-                <Th isNumeric>Amount</Th>
-                <Th>Status</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {allPrizeDatabase.map((prize) => (
-                <Tr key={prize.id}>
-                  <Td>{prize.name}</Td>
-                  <Td isNumeric>${prize.price.toLocaleString()}</Td>
-                  <Td>
-                    <Badge colorScheme="green">Available</Badge>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </Box>
-      </Center>
-    </ChakraProvider>
+    <Box
+      bg={cardBg}
+      p={4}
+      borderRadius="md"
+      boxShadow="lg"
+      transition="transform 0.2s"
+      _hover={{ transform: 'scale(1.05)' }}
+    >
+      <Heading as="h2" size="lg" color={cardText}>
+        ${parseFloat(amount).toLocaleString()}
+      </Heading>
+      <Text color={cardText} mt={2} isTruncated>
+        {name}
+      </Text> 
+    </Box>
   );
 };
 
-export default PrizeTable;
+const PrizesPage = () => {
+  const  {data, isSuccess} = useGetAllPrizeQuery();
+  return ( 
+      <Box py={8} minHeight={'100vh'} bgGradient="linear(to-r, teal.500, green.500)">
+        <Container maxW="container.xl">
+          <Box textAlign="center" mb={10}>
+            <Heading as="h1" size="2xl" color="white" mb={4}>
+              Discover Your Winning Prize!
+            </Heading>
+            <Text fontSize="xl" color="whiteAlpha.800">
+              Explore our exciting prizes and see what you can win!
+            </Text>
+          </Box>
+
+        { isSuccess && data && data.length > 0 ?
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+            {data.map(prize => (
+              <GridItem key={prize.id}>
+                <PrizeCard {...prize} />
+              </GridItem>
+            ))}
+          </SimpleGrid>
+          :
+          ''
+        }
+        </Container>
+      </Box> 
+  );
+};
+
+export default PrizesPage;

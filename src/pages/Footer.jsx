@@ -11,11 +11,27 @@ import {
     Stack,
     Text, VStack
 } from '@chakra-ui/react';
-import React from 'react';
-import { FaEnvelope, FaFacebook, FaInstagram, FaLinkedin, FaMapMarkerAlt, FaPhoneAlt, FaTwitter } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { FaEnvelope, FaFacebook, FaMapMarkerAlt, FaYoutube } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { useSubsCribeChannelMutation } from '../Store/feature/prize/api';
 
 const Footer = () => {
+    const [provideEmailObject, {isSuccess, data}]  = useSubsCribeChannelMutation();
+    const [email, setEmail] = useState('');
+    const handleSubscribeEmail = (e) => {
+        e.preventDefault();
+        if(email){
+            provideEmailObject({email})
+        }
+    }
+
+    useEffect(()=>{ 
+        if(isSuccess){
+            document.getElementById('subscribe__email').value=''
+        }
+    },[data, isSuccess])
 return (
     <Box bg="gray.900" color="gray.200" py={{ base: 10, md: 16 }}>
     <Container maxW="container.lg">
@@ -37,13 +53,16 @@ return (
             <Link to="/how-to-play" style={{ textDecoration: 'none', color: 'gray.200' }}>
             How to Play
             </Link>
-            <Link to="/results" style={{ textDecoration: 'none', color: 'gray.200' }}>
-            Results
+            <Link to="/affiliate-earning" style={{ textDecoration: 'none', color: 'gray.200' }}>
+                Affiliate Earning
             </Link>
-            <Link to="/about" style={{ textDecoration: 'none', color: 'gray.200' }}>
+            <Link to="/draw" style={{ textDecoration: 'none', color: 'gray.200' }}>
+                Draw And Check Our System
+            </Link>
+            <Link to="/about-us" style={{ textDecoration: 'none', color: 'gray.200' }}>
             About Us
             </Link>
-            <Link to="/contact" style={{ textDecoration: 'none', color: 'gray.200' }}>
+            <Link to="/contact-us" style={{ textDecoration: 'none', color: 'gray.200' }}>
             Contact Us
             </Link>
         </VStack>
@@ -51,17 +70,18 @@ return (
         {/* Contact Information */}
         <VStack align={{ base: "center", md: "flex-start" }} spacing={2} mb={{ base: 8, md: 0 }}>
             <Heading size="sm" color="white">Contact Us</Heading>
-            <HStack>
-            <Icon as={FaPhoneAlt} />
-            <Text>+123-456-7890</Text>
+            <HStack> 
             </HStack>
             <HStack>
             <Icon as={FaEnvelope} />
-            <Text>support@lottery.com</Text>
+            <Text>teencard@gmail.com</Text>
             </HStack>
             <HStack>
             <Icon as={FaMapMarkerAlt} />
-            <Text>123 Lottery St, Winning City, WC 12345</Text>
+            <VStack>
+                <Text>4501 15th Ave S #108, Fargo,</Text>
+                <Text>ND 58103, United States</Text>
+            </VStack>
             </HStack>
         </VStack>
 
@@ -69,10 +89,9 @@ return (
         <VStack align={{ base: "center", md: "flex-start" }} spacing={2}>
             <Heading size="sm" color="white">Follow Us</Heading>
             <HStack spacing={4}>
-            <Link to="#" style={{ color: 'gray.200' }}><Icon as={FaFacebook} boxSize={6} /></Link>
-            <Link to="#" style={{ color: 'gray.200' }}><Icon as={FaTwitter} boxSize={6} /></Link>
-            <Link to="#" style={{ color: 'gray.200' }}><Icon as={FaInstagram} boxSize={6} /></Link>
-            <Link to="#" style={{ color: 'gray.200' }}><Icon as={FaLinkedin} boxSize={6} /></Link>
+            <Link to="https://facebook.com/globallotterry" target='_blank' style={{ color: 'gray.200' }}><Icon as={FaFacebook} boxSize={6} /></Link>
+            <Link to="https://youtube.com/@globallotto" target='_blank' style={{ color: 'gray.200' }}><Icon as={FaYoutube} boxSize={6} /></Link>
+            <Link to="mailto:teeencard@gmail.com" target='_blank' style={{ color: 'gray.200' }}><Icon as={MdEmail} boxSize={6} /></Link> 
             </HStack>
         </VStack>
         </Flex>
@@ -83,16 +102,30 @@ return (
         {/* Newsletter Signup */}
         <VStack align={{ base: "center", md: "flex-start" }} spacing={4}>
             <Heading size="sm" color="white">Newsletter Signup</Heading>
-            <Flex direction={{ base: "column", md: "row" }} w="full" maxW="md">
-            <Input placeholder="Your email address" mb={{ base: 2, md: 0 }} mr={{ md: 2 }} />
-            <Button colorScheme="blue">Subscribe</Button>
-            </Flex>
+            <form onSubmit={handleSubscribeEmail}>
+                <Flex direction={{ base: "column", md: "row" }} w="full" maxW="md">
+                    
+                    <Input 
+                        isRequired
+                        placeholder="Your email address" 
+                        id='subscribe__email'
+                        type='email'
+                        name='email'
+                        mb={{ base: 2, md: 0 }} 
+                        mr={{ md: 2 }} 
+                        onChange={(e)=> setEmail(e.target.value)}
+                    />
+                    <Button colorScheme="blue" type='submit'>Subscribe</Button>
+                    
+                </Flex>
+            </form>
         </VStack>
 
         {/* Legal Information */}
         <HStack spacing={4} mt={{ base: 4, md: 0 }}>
             <Link to="/privacy-policy" style={{ textDecoration: 'none', color: 'gray.200' }}>Privacy Policy</Link>
-            <Link to="/terms-of-service" style={{ textDecoration: 'none', color: 'gray.200' }}>Terms of Service</Link>
+            <Link to="/terms-and-condition" style={{ textDecoration: 'none', color: 'gray.200' }}>Terms of Service</Link>
+            <Link to="/refund-policy" style={{ textDecoration: 'none', color: 'gray.200' }}>Refund Policy</Link>
         </HStack>
         </Stack>
     </Container>

@@ -7,10 +7,10 @@ import { setUserLoggedOut } from '../feature/auth/authSlice';
 const baseQuery = fetchBaseQuery({
     baseUrl: `http://localhost:11111/api/v1`,
     prepareHeaders: async (headers,{getState}) => {
-        let tokenId = getState()?.auth?.auth?.tokenId; 
-        let userId = getState()?.auth?.auth?.userId; 
-        let token = tokenId+"__"+userId
-        if(token){
+        let tokenId = getState()?.auth?.auth?.tokenId || ''; 
+        let userId = getState()?.auth?.auth?.userId || ''; 
+        if(tokenId && userId){
+            let token = tokenId+"__"+userId
             headers.set('authorization', `Bearer ${token}`)
         }
         return headers;

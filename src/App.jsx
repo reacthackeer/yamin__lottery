@@ -1,10 +1,13 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+import AboutUsPage from './pages/AboutUs';
+import AffiliateEarningPage from './pages/Affiliate';
 import CheckAdminIsLoggedIn from './pages/CheckAuth/CheckAdminIsLoggedIn';
 import CheckUserIsLoggedIn from './pages/CheckAuth/CheckUserIsLoggedIn';
 import ContactUs from './pages/ContactUs';
 import Dashboard from './pages/Dashboard';
+import DrawPage from './pages/DrawPage';
 import BecomeAAdmin from './pages/Earning/BecomeAAdmin';
 import BecomeALocalAgent from './pages/Earning/BecomeALocalAgent';
 import BecomeAMasterAgent from './pages/Earning/BecomeAMasterAgent';
@@ -24,11 +27,13 @@ import LotteryHistory from './pages/History/LotteryHistory';
 import TransactionHistory from './pages/History/TransactionHistory';
 import TransferHistory from './pages/History/TransferHistory';
 import WithdrawalHistory from './pages/History/WithdrawalHistory';
+import HowToPlayPage from './pages/HowToPlay';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import ResponsiveMenu from './pages/Menu/Menu';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RefundPolicy from './pages/RefundPolicy';
+import RequirementSeller from './pages/Requirement/Seller';
 import SignUp from './pages/SignUp';
 import TermsAndCondition from './pages/TermsAndCondition';
 import WinnerPage from './pages/WinnerPage';
@@ -48,6 +53,7 @@ import AddBackupPassword from './pages/settings/AddBackupPassword';
 import AddCouponCode from './pages/settings/AddCoupon';
 import AddCurrency from './pages/settings/AddCurrency';
 import AddDepositWallet from './pages/settings/AddDepositWallet';
+import AddPrize from './pages/settings/AddPrize';
 import AddSystemLottery from './pages/settings/AddSystemLottery';
 import BalanceTransferPage from './pages/settings/BalanceTransfer';
 import Deposit from './pages/settings/Deposit';
@@ -65,15 +71,55 @@ const appComponentMainRouter = createBrowserRouter([
     element: <Box>
               <ResponsiveMenu/>
               <LandingPage/>
+              <Footer/>
+            </Box>
+  },
+  {
+    path: '/how-to-play', 
+    element: <Box>
+              <ResponsiveMenu/>
+              <HowToPlayPage/>
+              <Footer/>
+            </Box>
+  },
+  {
+    path: '/draw', 
+    element: <Box>
+              <ResponsiveMenu/>
+              <DrawPage/>
+              <Footer/>
             </Box>
   },
   {
     path: '/winner', 
-    element: <WinnerPage/>
+
+    element: <Box>
+                <ResponsiveMenu/>
+                <WinnerPage/>
+                <Footer/>
+              </Box>
+  }, 
+  {
+    path: '/affiliate-earning', 
+
+    element: <Box>
+                <ResponsiveMenu/>
+                <AffiliateEarningPage/>
+                <Footer/>
+              </Box>
   }, 
   {
     path: '/prize', 
-    element: <PrizePage/>
+
+    element: <Box>
+              <ResponsiveMenu/>
+              <PrizePage/>
+              <Footer/>
+            </Box>
+  },  
+  {
+    path: '/requirement/seller', 
+    element: <RequirementSeller/>
   },  
   {
     path: '/privacy-policy', 
@@ -95,6 +141,22 @@ const appComponentMainRouter = createBrowserRouter([
     path: '/signup', 
     element: <SignUp/>
   },
+  {
+    path: 'contact-us', 
+    element:  <Box>
+                <ResponsiveMenu/>
+                <ContactUs/>
+                <Footer/>
+              </Box>
+  }, 
+  {
+    path: 'about-us', 
+    element:  <Box>
+                <ResponsiveMenu/>
+                <AboutUsPage/>
+                <Footer/>
+              </Box>
+  }, 
 
   {
     path: '/account/dashboard', 
@@ -185,6 +247,10 @@ const appComponentMainRouter = createBrowserRouter([
     element: <CheckAdminIsLoggedIn> <AddCurrency/> </CheckAdminIsLoggedIn>
   },
   {
+    path: '/settings/add-prize', 
+    element: <CheckAdminIsLoggedIn> <AddPrize/> </CheckAdminIsLoggedIn>
+  },
+  {
     path: '/settings/add-wallet', 
     element: <CheckAdminIsLoggedIn> <AddDepositWallet/> </CheckAdminIsLoggedIn> 
   },
@@ -263,13 +329,6 @@ const appComponentMainRouter = createBrowserRouter([
   {
     path: '/earning/invest-system', 
     element: <CheckUserIsLoggedIn> <InvestSystem/> </CheckUserIsLoggedIn>
-  }, 
-  {
-    path: 'contact-us', 
-    element:  <Box>
-                <ContactUs/>
-                <Footer/>
-              </Box>
   }, 
 ]);
 

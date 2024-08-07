@@ -51,12 +51,17 @@ $box__shadow__color: rgba($color: grey, $alpha: .5);
     grid-gap: 20px;
 
     .profile__container{  
+        transition: all .3s;
         position: relative;
         height: fit-content;
         width: 100%;
         padding: 10px;
         box-shadow: 0 0 4px $box__shadow__color;
         background-color: $background__color; 
+    }
+    .profile__container.active{
+        height: 60px !important;
+        overflow: hidden;
     }
     .content__container{  
         position: relative; 
@@ -186,6 +191,32 @@ $box__shadow__color: rgba($color: grey, $alpha: .5);
         width: 100%; 
         padding: 4px 10px; 
         background-color: #E2E8F0;
+    }
+    .current__link{ 
+        background-color: #2B6CB0;
+        color: white;
+    }
+    .link__item:hover{
+        background-color: rgba($color: #dae4f1, $alpha: 1);
+    }
+    .current__link{ 
+        background-color: #2B6CB0;
+        color: white;
+    }
+}
+
+.main__menu__container{
+    position: relative;
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+    .link__item{
+        position: relative;
+        width: 100%; 
+        height: fit-content;
+        padding: 4px 10px; 
+        background-color: #E2E8F0;
+        margin-bottom: 1px;
     }
     .current__link{ 
         background-color: #2B6CB0;

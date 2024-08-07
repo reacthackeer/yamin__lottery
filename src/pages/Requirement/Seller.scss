@@ -1,0 +1,52 @@
+.seller__content__main__container{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    height: 11.69in;
+    width: 8.27in;
+    .main{
+        position: relative;
+        background-color: white;
+        padding: 40px;
+        box-sizing: border-box;
+    }
+}
+
+
+.niyog__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .niyog__content {
+    background: #ffffff; 
+    padding: 20px;
+    width: 210mm; // A4 width
+    height: auto;
+    box-sizing: border-box; 
+  }
+  
+  .niyog__heading {
+    color: #2d3748;
+  }
+  
+  .niyog__text {
+    color: #4a5568;
+    line-height: 1.6;
+  }
+  
+  .niyog__link {
+    color: #3182ce;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  ul {
+    list-style-type: disc;
+    padding-left: 20px;
+  }

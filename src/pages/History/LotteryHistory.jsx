@@ -27,7 +27,7 @@ const LotteryHistory = () => {
     const {userId} = useSelector((state)=> state.auth.auth);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    const [users, setUsers] = useState([{id: 1, date: '30/12/2024', type: "Lottery", amount: '1', status: 'success', phone: '+8801333333333', number: '838393949302'}]); 
+    const [users, setUsers] = useState([]); 
     const [currentLimit] = useState(10); 
     const {data, isSuccess, isLoading, isError} = useGetAllSingleUserLotteryQuery({userId, page: currentPage, limit: currentLimit});
     useEffect(()=>{

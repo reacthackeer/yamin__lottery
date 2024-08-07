@@ -6,7 +6,7 @@ const useAuthCheck = () => {
     const [authCheck, setAuthCheck] = useState(false);
     const dispatch = useDispatch(); 
     useEffect(()=>{
-        let authInfo = JSON.parse(localStorage.getItem('auth'));
+        let authInfo = JSON.parse(localStorage.getItem('auth')) || {};
         if(authInfo && authInfo?.id){ 
             dispatch(setLoginUser(authInfo));
             setAuthCheck(()=> true);

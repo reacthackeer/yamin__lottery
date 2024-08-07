@@ -22,6 +22,7 @@ const SettingsLinkBar = () => {
             {role === 1 && designation === 'admin' ?  <Link className={`link__item ${currentLink === 'add-system-lottery' && 'current__link'}`}    to='/settings/add-system-lottery'>Add Lottery</Link> : '' }
             {role === 1 && designation === 'admin' ?  <Link className={`link__item ${currentLink === 'add-wallet' && 'current__link'}`}    to='/settings/add-wallet'>Add Wallet</Link> : '' }
             {role === 1 && designation === 'admin' ?  <Link className={`link__item ${currentLink === 'add-coupon' && 'current__link'}`}    to='/settings/add-coupon'>Add Coupon</Link> : '' }
+            {role === 1 && designation === 'admin' ?  <Link className={`link__item ${currentLink === 'add-prize' && 'current__link'}`}    to='/settings/add-prize'>Add Prize</Link> : '' }
             {role === 1 && designation === 'admin' ?  <Link className={`link__item ${currentLink === 'deposit-request' && 'current__link'}`}    to='/settings/deposit-request'>Deposit Request</Link> : '' }
             {role === 1 && designation === 'admin' ?  <Link className={`link__item ${currentLink === 'withdrawal-request' && 'current__link'}`} to='/settings/withdrawal-request'>Withdrawal Request</Link> : '' }
         </Box>

@@ -86,8 +86,7 @@ const BackupPasswordComponent = ({ formData, setFormData }) => {
             confirmPassword: '',
             email: '',
             mainPassword: ''
-          });
-          navigate('/profile')
+          }); 
           toast({
             title: "Successfully backup password added!",
             duration: 4000,

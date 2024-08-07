@@ -4,29 +4,37 @@ const DashboardSideBar = ({sidebarType, setSidebarType}) => {
     useEffect(()=>{ 
         setSidebarType(()=> window.location.pathname.split('/')[1]); 
     },[])
+
+    const handleSetSideBarType = (type) => {
+        if(sidebarType !== type){
+            setSidebarType(()=> type);
+        }else{ 
+            document.querySelector('.profile__container').classList.toggle('active')
+        }
+    }
     return (
         <HStack> 
             <Button
                 colorScheme={sidebarType === 'account' ? 'blue' : 'gray'}
-                onClick={()=> setSidebarType(()=> 'account')}
+                onClick={()=> handleSetSideBarType('account')}
             >
                 Acc
             </Button>
             <Button 
                 colorScheme={sidebarType === 'history' ? 'blue' : 'gray'}
-                onClick={()=> setSidebarType(()=> 'history')}
+                onClick={()=> handleSetSideBarType('history')}
             >
                 His
             </Button>
             <Button
                 colorScheme={sidebarType === 'earning' ? 'blue' : 'gray'}
-                onClick={()=> setSidebarType(()=> 'earning')}
+                onClick={()=> handleSetSideBarType('earning')}
             >
                 Ear
             </Button>
             <Button
                 colorScheme={sidebarType === 'settings' ? 'blue' : 'gray'}
-                onClick={()=> setSidebarType(()=> 'settings')}
+                onClick={()=> handleSetSideBarType('settings')}
             >
                 Sett
             </Button>

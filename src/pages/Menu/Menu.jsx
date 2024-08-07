@@ -1,64 +1,74 @@
-// src/components/ResponsiveMenu.jsx
-import { CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
-import { Box, Flex, IconButton, useDisclosure } from '@chakra-ui/react';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // or your preferred routing library
-import '../../style/ResponsiveMenu.scss';
+import { HamburgerIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerOverlay,
+  Image,
+  Img,
+  useDisclosure
+} from '@chakra-ui/react';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-const menuItems = [
-  'Home',
-  'About Us',
-  'Games',
-  'Results',
-  'Winning Numbers',
-  'How to Play',
-  'Promotions',
-  'FAQs',
-  'Contact Us'
-];
-
-const ResponsiveMenu = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-
+function DrawerExample() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const btnRef = React.useRef()
+  const navigate = useNavigate();
   return (
-    <Box as="nav" className="menu-container">
-      <Flex className="desktop-menu" display={{ base: 'none', md: 'flex' }}>
-        {menuItems.map((item, index) => (
-          <Link
-            key={index}
-            to={`/${item.replace(/\s+/g, '').toLowerCase()}`}
-            className={`menu-item ${hoveredIndex === index ? 'hovered' : ''}`}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-          >
-            {item}
-          </Link>
-        ))}
-      </Flex>
-      <Flex className="mobile-menu" display={{ base: 'flex', md: 'none' }}>
-        <IconButton
-          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-          aria-label="Open Menu"
-          onClick={isOpen ? onClose : onOpen}
+    <>
+      <Box
+        display={'flex'}
+        justifyContent={'space-between'}
+        padding={'10px'}
+        bgGradient="linear(to-r, teal.500, green.500)"
+      >
+        <Img 
+          width={'200px'} 
+          src='/logo.png' 
+          alt='global lottery logo'
+          onClick={()=> navigate('/')}
         />
-        {isOpen && (
-          <Flex direction="column" className="mobile-menu-items">
-            {menuItems.map((item, index) => (
-              <Link
-                key={index}
-                to={`/${item.replace(/\s+/g, '').toLowerCase()}`}
-                className="menu-item"
-                onClick={onClose}
-              >
-                {item}
-              </Link>
-            ))}
-          </Flex>
-        )}
-      </Flex>
-    </Box>
-  );
-};
+        <Button
+          onClick={()=> onOpen()}
+        ><HamburgerIcon/></Button>
+      </Box>
+      <Drawer
+        isOpen={isOpen}
+        placement='right'
+        onClose={onClose}
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <Image src='/logo.png' alt='logo'/>
 
-export default ResponsiveMenu;
+          <DrawerBody className='main__menu__container'>  
+            <Link className='link__item' to='/'>Home</Link>
+            <Link className='link__item' to='/prize'>Prizes</Link>
+            <Link className='link__item' to='/winner'>Winner</Link>
+            <Link className='link__item' to='/login'>Login</Link>
+            <Link className='link__item' to='/signup'>Signup</Link>
+            <Link className='link__item' to='/prize'>Prizes</Link>
+            <Link className='link__item' to='/how-to-play'>How To Play</Link>
+            <Link className='link__item' to='/contact-us'>Contact US</Link>
+            <Link className='link__item' to='/about-us'>About US</Link>
+          </DrawerBody>
+
+          <DrawerFooter>
+            <Button variant='outline' mr={3} onClick={onClose}>
+              Close
+            </Button> 
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </>
+  )
+}
+
+export default DrawerExample;
